@@ -120,11 +120,23 @@ Comments
 ---
 
 (fragment
-  (comment)
-  (comment)
+  (comment
+    (comment_start_tag)
+    (text)
+    (comment_end_tag))
+  (comment
+    (comment_start_tag)
+    (text)
+    (comment_end_tag))
   (element
     (start_tag (tag_name))
-    (comment)
+    (comment
+      (comment_start_tag)
+      (element
+        (start_tag (tag_name))
+        (text)
+        (end_tag (tag_name)))
+      (comment_end_tag))
     (end_tag (tag_name))))
 
 ==================================

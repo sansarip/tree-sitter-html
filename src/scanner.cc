@@ -5,11 +5,16 @@
 #include <cwctype>
 #include <cstring>
 #include "tag.h"
+#include <regex>
+#include <iostream>
 
 namespace {
 
 using std::vector;
 using std::string;
+using std::regex;
+using std::cout;
+using std::flush;
 
 enum TokenType {
   START_TAG_NAME,
@@ -20,7 +25,7 @@ enum TokenType {
   SELF_CLOSING_TAG_DELIMITER,
   IMPLICIT_END_TAG,
   RAW_TEXT,
-  COMMENT
+  TEXT
 };
 
 struct Scanner {
@@ -90,33 +95,6 @@ struct Scanner {
     return tag_name;
   }
 
-  bool scan_comment(TSLexer *lexer) {
-    if (lexer->lookahead != '-') return false;
-    lexer->advance(lexer, false);
-    if (lexer->lookahead != '-') return false;
-    lexer->advance(lexer, false);
-
-    unsigned dashes = 0;
-    while (lexer->lookahead) {
-      switch (lexer->lookahead) {
-        case '-':
-          ++dashes;
-          break;
-        case '>':
-          if (dashes >= 2) {
-            lexer->result_symbol = COMMENT;
-            lexer->advance(lexer, false);
-            lexer->mark_end(lexer);
-            return true;
-          }
-        default:
-          dashes = 0;
-      }
-      lexer->advance(lexer, false);
-    }
-    return false;
-  }
-
   bool scan_raw_text(TSLexer *lexer) {
     if (!tags.size()) return false;
 
@@ -140,6 +118,37 @@ struct Scanner {
     }
 
     lexer->result_symbol = RAW_TEXT;
+    return true;
+  }
+
+  bool scan_comment_end_tag(TSLexer *lexer) {
+    if (lexer->lookahead != '-') return false;
+    lexer->advance(lexer, false);
+    if (lexer->lookahead != '-') return false;
+    lexer->advance(lexer, false);
+    if (lexer->lookahead != '>') return false;
+    return true;
+  }
+  
+  bool scan_text(TSLexer *lexer) {
+    unsigned iterations = 0;
+    while (lexer->lookahead && lexer->lookahead != '<')
+    {
+      if (lexer->lookahead == '-') {
+        lexer->mark_end(lexer);
+        if (scan_comment_end_tag(lexer)) {
+          if (!iterations) {
+            return false;
+          }
+          lexer->result_symbol = TEXT;
+          return true;
+        }
+      }
+      lexer->advance(lexer, false);
+      iterations++;
+    }
+    lexer->mark_end(lexer);
+    lexer->result_symbol = TEXT;
     return true;
   }
 
@@ -233,8 +242,18 @@ struct Scanner {
       lexer->advance(lexer, true);
     }
 
+    // for (int i = sizeof(valid_symbols) - 1; i >= 0; i--) {
+    //   cout << "\n" << valid_symbols[i];
+    // }
+    // cout << flush;
+
     if (valid_symbols[RAW_TEXT] && !valid_symbols[START_TAG_NAME] && !valid_symbols[END_TAG_NAME]) {
       return scan_raw_text(lexer);
+    }
+
+    if (valid_symbols[TEXT] && lexer->lookahead && lexer->lookahead != '<' && !valid_symbols[START_TAG_NAME] && !valid_symbols[END_TAG_NAME])
+    {
+      return scan_text(lexer);
     }
 
     switch (lexer->lookahead) {
@@ -242,10 +261,10 @@ struct Scanner {
         lexer->mark_end(lexer);
         lexer->advance(lexer, false);
 
-        if (lexer->lookahead == '!') {
-          lexer->advance(lexer, false);
-          return scan_comment(lexer);
-        }
+        // if (lexer->lookahead == '!') {
+        //   lexer->advance(lexer, false);
+        //   return false;
+        // }
 
         if (valid_symbols[IMPLICIT_END_TAG]) {
           return scan_implicit_end_tag(lexer);

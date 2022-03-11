@@ -4,8 +4,13 @@
     "fragment": {
       "type": "REPEAT",
       "content": {
-        "type": "SYMBOL",
-        "name": "_node"
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        ]
       }
     },
     "doctype": {
@@ -55,6 +60,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "comment"
+        },
+        {
+          "type": "SYMBOL",
           "name": "script_element"
         },
         {
@@ -64,6 +73,26 @@
         {
           "type": "SYMBOL",
           "name": "erroneous_end_tag"
+        }
+      ]
+    },
+    "comment": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "comment_start_tag"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "comment_end_tag"
         }
       ]
     },
@@ -164,6 +193,10 @@
           "name": "end_tag"
         }
       ]
+    },
+    "comment_start_tag": {
+      "type": "STRING",
+      "value": "<!--"
     },
     "start_tag": {
       "type": "SEQ",
@@ -280,6 +313,10 @@
           "value": "/>"
         }
       ]
+    },
+    "comment_end_tag": {
+      "type": "STRING",
+      "value": "-->"
     },
     "end_tag": {
       "type": "SEQ",
@@ -431,17 +468,9 @@
           ]
         }
       ]
-    },
-    "text": {
-      "type": "PATTERN",
-      "value": "[^<>\\s]([^<>]*[^<>\\s])?"
     }
   },
   "extras": [
-    {
-      "type": "SYMBOL",
-      "name": "comment"
-    },
     {
       "type": "PATTERN",
       "value": "\\s+"
@@ -484,7 +513,7 @@
     },
     {
       "type": "SYMBOL",
-      "name": "comment"
+      "name": "text"
     }
   ],
   "inline": [],

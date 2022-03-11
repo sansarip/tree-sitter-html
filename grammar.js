@@ -2,8 +2,7 @@ module.exports = grammar({
   name: 'html',
 
   extras: $ => [
-    $.comment,
-    /\s+/,
+    /\s+/
   ],
 
   externals: $ => [
@@ -15,11 +14,11 @@ module.exports = grammar({
     '/>',
     $._implicit_end_tag,
     $.raw_text,
-    $.comment,
+    $.text
   ],
 
   rules: {
-    fragment: $ => repeat($._node),
+    fragment: $ => repeat(choice($._node)),
 
     doctype: $ => seq(
       '<!',
@@ -34,9 +33,16 @@ module.exports = grammar({
       $.doctype,
       $.text,
       $.element,
+      $.comment,
       $.script_element,
       $.style_element,
       $.erroneous_end_tag
+    ),
+
+    comment: $ => seq(
+      $.comment_start_tag,
+      repeat($._node),
+      $.comment_end_tag
     ),
 
     element: $ => choice(
@@ -59,6 +65,8 @@ module.exports = grammar({
       optional($.raw_text),
       $.end_tag
     ),
+  
+    comment_start_tag: $ => '<!--',
 
     start_tag: $ => seq(
       '<',
@@ -87,6 +95,8 @@ module.exports = grammar({
       repeat($.attribute),
       '/>'
     ),
+
+    comment_end_tag: $ => '-->',
 
     end_tag: $ => seq(
       '</',
@@ -120,6 +130,6 @@ module.exports = grammar({
       seq('"', optional(alias(/[^"]+/, $.attribute_value)), '"')
     ),
 
-    text: $ => /[^<>\s]([^<>]*[^<>\s])?/
+    // text: $ => /[^<>\s]([^<>]*[^<>\s])?/
   }
 });
