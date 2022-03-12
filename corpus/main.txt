@@ -117,6 +117,7 @@ Comments
 <div>
   <!-- <span>something</span> -->
 </div>
+<div>-</div>
 ---
 
 (fragment
@@ -137,6 +138,10 @@ Comments
         (text)
         (end_tag (tag_name)))
       (comment_end_tag))
+    (end_tag (tag_name)))
+  (element
+    (start_tag (tag_name))
+    (text)
     (end_tag (tag_name))))
 
 ==================================

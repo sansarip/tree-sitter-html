@@ -143,8 +143,9 @@ struct Scanner {
           lexer->result_symbol = TEXT;
           return true;
         }
+      } else {
+        lexer->advance(lexer, false);
       }
-      lexer->advance(lexer, false);
       iterations++;
     }
     lexer->mark_end(lexer);
