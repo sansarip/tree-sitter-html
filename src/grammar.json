@@ -4,13 +4,8 @@
     "fragment": {
       "type": "REPEAT",
       "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_node"
-          }
-        ]
+        "type": "SYMBOL",
+        "name": "_node"
       }
     },
     "doctype": {
@@ -206,13 +201,21 @@
           "value": "<"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_start_tag_name"
-          },
-          "named": true,
-          "value": "tag_name"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_start_tag_name"
+              },
+              "named": true,
+              "value": "tag_name"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "REPEAT",
@@ -326,13 +329,21 @@
           "value": "</"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_end_tag_name"
-          },
-          "named": true,
-          "value": "tag_name"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_end_tag_name"
+              },
+              "named": true,
+              "value": "tag_name"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "STRING",

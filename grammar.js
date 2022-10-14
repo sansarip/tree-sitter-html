@@ -70,7 +70,7 @@ module.exports = grammar({
 
     start_tag: $ => seq(
       '<',
-      alias($._start_tag_name, $.tag_name),
+      optional(alias($._start_tag_name, $.tag_name)),
       repeat($.attribute),
       '>'
     ),
@@ -100,7 +100,7 @@ module.exports = grammar({
 
     end_tag: $ => seq(
       '</',
-      alias($._end_tag_name, $.tag_name),
+      optional(alias($._end_tag_name, $.tag_name)),
       '>'
     ),
 

@@ -92,7 +92,11 @@ struct Scanner {
       tag_name += towupper(lexer->lookahead);
       lexer->advance(lexer, false);
     }
-    return tag_name;
+    if (lexer->lookahead == '=') {
+      return "";
+    } else {
+      return tag_name;
+    }
   }
 
   bool scan_raw_text(TSLexer *lexer) {
