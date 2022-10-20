@@ -238,7 +238,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "attribute",
@@ -315,6 +315,10 @@
   },
   {
     "type": "</",
+    "named": false
+  },
+  {
+    "type": "</>",
     "named": false
   },
   {

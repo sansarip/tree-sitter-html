@@ -235,22 +235,26 @@ struct Scanner {
       lexer->advance(lexer, false);
       if (!tags.empty()) {
         tags.pop_back();
-        lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
       }
+      lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
       return true;
     }
     return false;
   }
 
   bool scan(TSLexer *lexer, const bool *valid_symbols) {
+
+    // std::string s;
+    // s += lexer->lookahead;
+    // s += " ";
+    // for (int i = sizeof(valid_symbols) - 1; i >= 0; i--) {
+    //   cout << "\n" << s << valid_symbols[i];
+    // }
+    // cout << "_____" << flush;
+
     while (iswspace(lexer->lookahead)) {
       lexer->advance(lexer, true);
     }
-
-    // for (int i = sizeof(valid_symbols) - 1; i >= 0; i--) {
-    //   cout << "\n" << valid_symbols[i];
-    // }
-    // cout << flush;
 
     if (valid_symbols[RAW_TEXT] && !valid_symbols[START_TAG_NAME] && !valid_symbols[END_TAG_NAME]) {
       return scan_raw_text(lexer);

@@ -5,6 +5,10 @@ module.exports = grammar({
     /\s+/
   ],
 
+  conflicts: ($, previous) => previous.concat([
+    [$.self_closing_tag, $.end_tag]
+  ]),
+
   externals: $ => [
     $._start_tag_name,
     $._script_start_tag_name,
@@ -14,7 +18,7 @@ module.exports = grammar({
     '/>',
     $._implicit_end_tag,
     $.raw_text,
-    $.text
+    $.text,
   ],
 
   rules: {
@@ -89,20 +93,22 @@ module.exports = grammar({
       '>'
     ),
 
-    self_closing_tag: $ => seq(
+    self_closing_tag: $ => choice(seq(
       '<',
-      alias($._start_tag_name, $.tag_name),
+      optional(alias($._start_tag_name, $.tag_name)),
       repeat($.attribute),
       '/>'
-    ),
+    ), 
+    '</>'),
 
     comment_end_tag: $ => '-->',
 
-    end_tag: $ => seq(
+    end_tag: $ => choice(seq(
       '</',
       optional(alias($._end_tag_name, $.tag_name)),
       '>'
-    ),
+    ), 
+    '</>'),
 
     erroneous_end_tag: $ => seq(
       '</',
